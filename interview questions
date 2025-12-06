@@ -1,0 +1,58 @@
+1. What is Docker?
+Docker is an open-source containerization platform used to build, deploy, and manage the lifecycle of containers. It helps package applications and their dependencies into portable, isolated units.
+
+2. How are containers different from virtual machines?
+Containers are very lightweight because they don't have a complete operating system. Instead, they bundle an application, its dependencies, and minimal system libraries, sharing the host OS kernel. Virtual machines, conversely, include a full guest operating system, making them much heavier and slower to start.
+
+3. What is the Docker life cycle?
+The Docker life cycle involves:
+
+Writing a Dockerfile: Defining instructions for building an image.
+Building a Docker Image: Using docker build to create an image from the Dockerfile.
+Creating/Running a Docker Container: Using docker run to execute the image as an isolated container.
+Pushing to Registry: Storing the image in external registries like Docker Hub, ECR, etc.
+Pulling from Registry: Retrieving images from registries.
+4. What are the different Docker components?
+The main Docker components are:
+
+Docker Client (CLI): The command-line interface used by users to interact with Docker.
+Docker Daemon (Docker Host): The background service that manages Docker objects (images, containers, volumes, networks). It receives commands from the client and executes them. It's considered the "heart" of Docker.
+Docker Registry: A repository for storing and pulling Docker images (e.g., Docker Hub).
+5. What is the difference between Docker COPY and Docker ADD?
+
+COPY: Used to copy files or directories from a specific local path on the build context to the container's filesystem.
+ADD: Can also copy files from a local path, but additionally supports copying from URLs (downloading files) and automatically extracting compressed archives (like .tar, .zip) into the destination.
+6. What is the difference between CMD and ENTRYPOINT in Docker?
+
+CMD: Defines default arguments or commands for an executing container. These arguments can be easily overridden when the container is run using docker run command-line arguments.
+ENTRYPOINT: Defines the executable that will always be run when the container starts. Any arguments provided with docker run are appended to the ENTRYPOINT command as arguments. It's often used when you want to specify a fixed command that runs and allows for additional arguments to be passed.
+7. What are the networking types in Docker and what is the default?
+The default networking type in Docker is Bridge Network.
+Other common networking types include:
+
+Bridge Network: Creates a private virtual network for containers, allowing communication between containers on the same bridge and to the host via a virtual Ethernet device (Docker0).
+Host Network: Removes network isolation, directly binding the container's network stack to the host's network stack. Containers use the host's IP address.
+Overlay Network: Enables communication between containers running on different Docker hosts, commonly used in Docker Swarm or Kubernetes.
+Macvlan Network: Assigns a MAC address to a container, making it appear as a physical device on the network, allowing direct communication with physical network devices.
+8. Can you explain how to isolate networking between the containers?
+To isolate networking between containers, you can create custom Bridge Networks. By default, all containers use the default Docker0 bridge. By creating a new bridge network (docker network create) and then running specific containers on that network (docker run --network=), you ensure that only containers on the same custom bridge network can communicate with each other, providing network segregation from other containers or the default bridge.
+
+9. What is a multi-stage build in Docker?
+Multi-stage builds allow you to create a Dockerfile with multiple FROM instructions, defining different build stages. This enables copying only the necessary "artifacts" (like compiled binaries or final application files) from one stage to a much smaller, final image. This significantly reduces the final image size by discarding build-time dependencies and tools that are not needed at runtime.
+
+10. What are distroless images in Docker?
+Distroless images are extremely minimal Docker images that contain only your application and its direct runtime dependencies, without any package manager, shell, or other standard OS components typically found in a Linux distribution. This drastically reduces the image size and the attack surface, making them more secure by reducing the number of potential vulnerabilities. Examples include scratch or Google's gcr.io/distroless images.
+
+11. What are some real-time challenges you faced with Docker?
+
+Docker Daemon as a Single Point of Failure: The Docker daemon is a central process. If it crashes, all containers managed by it will be affected or stop working. (Tools like Podman address this by not having a central daemon).
+Docker Daemon running as Root User: The daemon running with root privileges poses a security risk. If compromised, an attacker could gain root access to the host system. (Podman runs as a non-root user).
+Resource Constraints/Management: Without proper resource limits (CPU, memory) configured for containers, one misbehaving container can consume excessive resources, impacting the performance or stability of other containers on the same host.
+12. What steps would you take to secure containers?
+
+Use Distroless Images: Minimize the attack surface by using images that contain only the necessary application and runtime dependencies.
+Ensure Proper Networking Configuration: Create custom bridge networks to isolate sensitive applications from others, preventing unauthorized communication between containers.
+Scan Container Images for Vulnerabilities: Use security scanning utilities (like Syft/Grype, Trivy, Clair) in your CI/CD pipeline to identify and address known vulnerabilities in images before deploying them to production.
+Run Containers as Non-Root Users: Whenever possible, configure your Dockerfiles to run processes inside the container with a non-root user to mitigate risks if the container is compromised.
+
+
