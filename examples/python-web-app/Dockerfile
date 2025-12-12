@@ -1,4 +1,3 @@
-#Django Docker file
 FROM ubuntu
 
 WORKDIR /app
@@ -14,10 +13,9 @@ RUN python3 -m venv venv1 && \
 source venv1/bin/activate && \
 pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8001
+EXPOSE 8000
 
-CMD source venv1/bin/activate && python3 manage.py runserver 0.0.0.0:8001
-
+CMD source venv1/bin/activate && python3 manage.py runserver 0.0.0.0:8000
 
 
 
